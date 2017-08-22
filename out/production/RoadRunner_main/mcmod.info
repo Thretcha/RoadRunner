@@ -1,0 +1,16 @@
+[
+{
+  "modid": "roadrunner",
+  "name": "Road Runner",
+  "description": "Move faster on roads and with Running Shoes",
+  "version": "",
+  "mcversion": "",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Thretcha"],
+  "credits": "Created by Thretcha",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

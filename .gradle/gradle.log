@@ -1,0 +1,15 @@
+:deobfCompileDummyTask
+:deobfProvidedDummyTask
+:sourceApiJava UP-TO-DATE
+:compileApiJava UP-TO-DATE
+:processApiResources UP-TO-DATE
+:apiClasses UP-TO-DATE
+:sourceMainJava UP-TO-DATE
+:compileJava
+:processResources UP-TO-DATE
+:classes
+:jar
+
+BUILD SUCCESSFUL
+
+Total time: 2.27 secs
