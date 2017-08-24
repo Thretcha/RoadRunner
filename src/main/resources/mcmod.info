@@ -3,7 +3,7 @@
   "modid": "roadrunner",
   "name": "Road Runner",
   "description": "Move faster on Road Blocks that you define in the config!",
-  "version": "1.0",
+  "version": "1.0.1",
   "mcversion": "",
   "url": "",
   "updateUrl": "",

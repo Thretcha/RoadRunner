@@ -2,13 +2,13 @@
 {
   "modid": "roadrunner",
   "name": "Road Runner",
-  "description": "Move faster on roads and with Running Shoes",
-  "version": "",
+  "description": "Move faster on Road Blocks that you define in the config!",
+  "version": "1.0",
   "mcversion": "",
   "url": "",
   "updateUrl": "",
   "authorList": ["Thretcha"],
-  "credits": "Created by Thretcha",
+  "credits": "Thanks to the people on the forge forum. Every time I got stuck, somebody answered my questions over night and allowed me to make progress during the day",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []

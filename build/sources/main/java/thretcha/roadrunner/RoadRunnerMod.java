@@ -8,9 +8,6 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.Logger;
 import thretcha.roadrunner.proxy.CommonProxy;
 
-import java.util.ArrayList;
-import java.util.UUID;
-
 //physical server - server.jar
 //Logical server - (world.isRemote==false)The logical server is what runs game logic: mob spawning, weather, updating inventories, health, AI, and all other game mechanics.
 
@@ -24,13 +21,11 @@ import java.util.UUID;
 @Mod(modid = RoadRunnerMod.MODID, version = RoadRunnerMod.VERSION, name = RoadRunnerMod.NAME, useMetadata = true)
 public class RoadRunnerMod {
     public static final String MODID = "roadrunner";
-    public static final String VERSION = "1.0";
+    public static final String VERSION = "1.0.1";
     public static final String NAME = "Road Runner";
-   // public static final ArrayList<String> ROAD_BLOCKS = new ArrayList<String>();
 
     @SidedProxy(clientSide = "thretcha.roadrunner.proxy.ClientProxy", serverSide = "thretcha.roadrunner.proxy.ServerProxy")
     public static CommonProxy proxy;
-
     /*
         All mods go through an initialization step before the next step is started !
         PreInitialization - "Run before anything else. Read your config, create blocks, items, etc, and register them with the GameRegistry."
@@ -46,9 +41,7 @@ public class RoadRunnerMod {
     public void preInit(FMLPreInitializationEvent event)
     {
         //System.out.println(UUID.randomUUID());
-        //read road blocks from config
         logger = event.getModLog();
-        //ROAD_BLOCKS.add("Block{minecraft:stonebrick}");
         this.proxy.preInit(event);
     }
 

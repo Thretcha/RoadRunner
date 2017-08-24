@@ -18,6 +18,8 @@ public abstract class CommonProxy {
         File directory = event.getModConfigurationDirectory();
         config = new Configuration(new File(directory.getPath(),"RoadRunner.cfg"));
         Config.readConfig();
+        RoadHandler.initRoadModifierUUIDList();
+        RoadHandler.initRoadModifierList();
         RoadHandler.addRoadBlocksFromConfig();
     }
 
