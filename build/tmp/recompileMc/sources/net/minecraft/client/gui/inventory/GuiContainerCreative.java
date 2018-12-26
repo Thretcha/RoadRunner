@@ -1009,7 +1009,6 @@ public class GuiContainerCreative extends InventoryEffectRenderer
      */
     public int getSelectedTabIndex()
     {
-        /** Currently selected creative inventory tab index. */
         return selectedTabIndex;
     }
 
