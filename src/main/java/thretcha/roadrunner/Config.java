@@ -98,6 +98,12 @@ public class Config {
     private static void initRoadBlockConfig(Configuration cfg) {
         int i = 1;
 
+        //TODO: fix this, needed atm to secure index in array == number in config (starts at 1)
+        blockIDs.add(null);
+        amounts.add(null);
+        operations.add(null);
+        uuids.add(null);
+
         while (cfg.hasCategory("RoadBlocks.Block"+i)) {
             blockIDs.add(i, cfg.getString("Block ID", "RoadBlocks.Block"+i, "", "ID of Road Block"));
             amounts.add(i, (double)cfg.getFloat("Modifier Amount","RoadBlocks.Block"+i, 0.0f,-1000.0f,1000.0f,"Amound of Speed Modification"));
@@ -106,6 +112,7 @@ public class Config {
 
             i++;
         }
+        System.out.println("ROADRUNNER12: "+i);
 
         if (i == 1) {
             cfg.addCustomCategoryComment(CATEGORY_ROAD_BLOCKS, "MOVEMENT_SPEED Attribute is used for more Info about Modifier Amounts and Operations:\nhttps://minecraft.gamepedia.com/Attribute");
@@ -116,10 +123,10 @@ public class Config {
             }
 
             for (int k = 1; k <= 5; k++) {
-                blockIDs.add(k, cfg.getString("Block ID", "RoadBlocks.Block"+k, baseIDs[k], "ID of Road Block"));
-                amounts.add(k, (double)cfg.getFloat("Modifier Amount","RoadBlocks.Block"+k, (float) baseAmounts[k],-1000.0f,1000.0f,"Amound of Speed Modification"));
-                operations.add(k, cfg.getInt("Modifier Operation","RoadBlocks.Block"+k,baseOperations[k],0,2,"Operation of Speed Modification"));
-                uuids.add(k, UUID.fromString(cfg.getString("UUID", "RoadBlocks.Block"+k, baseUUIDs[k], "UUID for Attribute modifier")));
+                blockIDs.add(k, cfg.getString("Block ID", "RoadBlocks.Block"+k, baseIDs[k-1], "ID of Road Block"));
+                amounts.add(k, (double)cfg.getFloat("Modifier Amount","RoadBlocks.Block"+k, (float) baseAmounts[k-1],-1000.0f,1000.0f,"Amound of Speed Modification"));
+                operations.add(k, cfg.getInt("Modifier Operation","RoadBlocks.Block"+k,baseOperations[k-1],0,2,"Operation of Speed Modification"));
+                uuids.add(k, UUID.fromString(cfg.getString("UUID", "RoadBlocks.Block"+k, baseUUIDs[k-1], "UUID for Attribute modifier")));
             }
         }
 

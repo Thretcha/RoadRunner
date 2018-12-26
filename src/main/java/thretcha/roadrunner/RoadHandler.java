@@ -18,7 +18,8 @@ public class RoadHandler {
     //all the Road Block read by the config
     public static Map<String,UUID> ROAD_BLOCKS = new HashMap<>();
     //stores the Road Blocks in the correct order so their modifier uuids are easier to get
-    public static String []ROAD_BLOCK_IDS={"","","","",""};
+    //public static String []ROAD_BLOCK_IDS={"","","","",""};
+    public static List<String> ROAD_BLOCK_IDS = new ArrayList<>();
 
     public static void initRoadModifierUUIDList(){
         /*
@@ -115,6 +116,14 @@ public class RoadHandler {
     }
     //To do find a better way to do this that isn't soo painful to look at.
     private void addCorrectRoadModifier(EntityLivingBase entity,String BlockUnderEntity){
+        int size = ROAD_BLOCK_IDS.size();
+        for(int i = 0; i<size; i++) {
+            if(BlockUnderEntity.equals(ROAD_BLOCK_IDS.get(i))) {
+                entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).applyModifier(ROAD_MODIFIER_LIST.get(i));
+                break;
+            }
+        }
+        /*
         if(BlockUnderEntity.equals(ROAD_BLOCK_IDS[0]))
         {
             entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).applyModifier(ROAD_MODIFIER_LIST.get(0));
@@ -135,12 +144,13 @@ public class RoadHandler {
         {
             entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).applyModifier(ROAD_MODIFIER_LIST.get(4));
         }
+        */
     }
     //To do figure out how to add roadblocks in the config in a non hard coded way
     public static void addRoadBlocksFromConfig(){
         for (int i = 1; i < Config.getBlockIDSize(); i++) {
             ROAD_BLOCKS.put("Block{" + Config.getBlockID(i) + "}", ROAD_MODIFIER_LIST.get(i-1).getID());
-            ROAD_BLOCK_IDS[i-1] = "Block{" + Config.getBlockID(i) + "}";
+            ROAD_BLOCK_IDS.add(i-1, "Block{" + Config.getBlockID(i) + "}");
         }
         /*
         if(Config.BLOCK_ID_1!="") {
