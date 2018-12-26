@@ -21,19 +21,27 @@ public class RoadHandler {
     public static String []ROAD_BLOCK_IDS={"","","","",""};
 
     public static void initRoadModifierUUIDList(){
+        /*
         ROAD_MODIFIER_UUID_LIST.add(UUID.fromString("8753f773-a718-4ea8-98db-4318be0159fe"));
         ROAD_MODIFIER_UUID_LIST.add(UUID.fromString("b8b8b5b0-a92a-4721-a9ec-5b83b1950331"));
         ROAD_MODIFIER_UUID_LIST.add(UUID.fromString("8d560517-f314-47e5-8420-1b13b4740034"));
         ROAD_MODIFIER_UUID_LIST.add(UUID.fromString("6de83cb8-883b-4d6b-915c-b90e2fdfe154"));
         ROAD_MODIFIER_UUID_LIST.add(UUID.fromString("48cf6bac-5b95-44b7-b8b0-8f3e491b2c2f"));
+        */
     }
 
     public static void initRoadModifierList(){
+        int size = Config.getUUIDSize();
+        for (int i = 1; i<size; i++) {
+            ROAD_MODIFIER_LIST.add(new AttributeModifier(Config.getUUID(i), "Road "+i+" Speed Modifier", Config.getAmount(i), Config.getOperation(i)));
+        }
+        /*
         ROAD_MODIFIER_LIST.add(new AttributeModifier(ROAD_MODIFIER_UUID_LIST.get(0), "Road 1 Speed Modifier", Config.BLOCK_AMOUNT_1, Config.BLOCK_OPERATION_1));
         ROAD_MODIFIER_LIST.add(new AttributeModifier(ROAD_MODIFIER_UUID_LIST.get(1), "Road 2 Speed Modifier", Config.BLOCK_AMOUNT_2, Config.BLOCK_OPERATION_2));
         ROAD_MODIFIER_LIST.add(new AttributeModifier(ROAD_MODIFIER_UUID_LIST.get(2), "Road 3 Speed Modifier", Config.BLOCK_AMOUNT_3, Config.BLOCK_OPERATION_3));
         ROAD_MODIFIER_LIST.add(new AttributeModifier(ROAD_MODIFIER_UUID_LIST.get(3), "Road 4 Speed Modifier", Config.BLOCK_AMOUNT_4, Config.BLOCK_OPERATION_4));
         ROAD_MODIFIER_LIST.add(new AttributeModifier(ROAD_MODIFIER_UUID_LIST.get(4), "Road 5 Speed Modifier", Config.BLOCK_AMOUNT_5, Config.BLOCK_OPERATION_5));
+        */
     }
     private boolean hasRoadModifier(EntityLivingBase entity){
 
@@ -130,6 +138,11 @@ public class RoadHandler {
     }
     //To do figure out how to add roadblocks in the config in a non hard coded way
     public static void addRoadBlocksFromConfig(){
+        for (int i = 1; i < Config.getBlockIDSize(); i++) {
+            ROAD_BLOCKS.put("Block{" + Config.getBlockID(i) + "}", ROAD_MODIFIER_LIST.get(i-1).getID());
+            ROAD_BLOCK_IDS[i-1] = "Block{" + Config.getBlockID(i) + "}";
+        }
+        /*
         if(Config.BLOCK_ID_1!="") {
             ROAD_BLOCKS.put("Block{" + Config.BLOCK_ID_1 + "}", ROAD_MODIFIER_LIST.get(0).getID());
             ROAD_BLOCK_IDS[0]="Block{" + Config.BLOCK_ID_1 + "}";
@@ -150,6 +163,7 @@ public class RoadHandler {
             ROAD_BLOCKS.put("Block{" + Config.BLOCK_ID_5 + "}", ROAD_MODIFIER_LIST.get(4).getID());
             ROAD_BLOCK_IDS[4]="Block{" + Config.BLOCK_ID_5 + "}";
         }
+        */
     }
 }
 
