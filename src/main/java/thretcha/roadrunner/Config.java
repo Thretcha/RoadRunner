@@ -14,6 +14,8 @@ public class Config {
     private static List<Integer> operations = new ArrayList<>();
     private static List<UUID> uuids = new ArrayList<>();
 
+    // if no user config is set, these base values will be used
+    // users will have to provide the UUID themselves in the config file. I didn't find a better way...
     private static String[] baseUUIDs = {
             "8753f773-a718-4ea8-98db-4318be0159fe",
             "b8b8b5b0-a92a-4721-a9ec-5b83b1950331",
@@ -30,7 +32,7 @@ public class Config {
             "minecraft:concrete",
     };
 
-    public static double[] baseAmounts = {
+    private static double[] baseAmounts = {
             0.2,
             0.1,
             0.1,
@@ -38,7 +40,7 @@ public class Config {
             0.3,
     };
 
-    public static int[] baseOperations = {
+    private static int[] baseOperations = {
             2,
             2,
             2,
@@ -64,8 +66,7 @@ public class Config {
             }
         }
     }
-    //currently Road Blocks are hard coded to be 5 at most
-    //hopefully I can find a more dynamic way later.
+
     private static void initRoadBlockConfig(Configuration cfg) {
         int i = 1;
 
@@ -75,6 +76,7 @@ public class Config {
         operations.add(null);
         uuids.add(null);
 
+        // loop goes as long as there are block<x> {} categories in the config -> dynamic amount set by the user is possible
         while (cfg.hasCategory("RoadBlocks.Block"+i)) {
             blockIDs.add(i, cfg.getString("Block ID", "RoadBlocks.Block" + i, "", "ID of Road Block"));
             amounts.add(i, (double) cfg.getFloat("Modifier Amount", "RoadBlocks.Block" + i, 0.0f, -1000.0f, 1000.0f, "Amound of Speed Modification"));
@@ -84,14 +86,17 @@ public class Config {
             i++;
         }
 
+        // loop didn't run once -> config does not exist yet -> create it
         if (i == 1) {
             cfg.addCustomCategoryComment(CATEGORY_ROAD_BLOCKS, "MOVEMENT_SPEED Attribute is used for more Info about Modifier Amounts and Operations:\nhttps://minecraft.gamepedia.com/Attribute");
             cfg.addCustomCategoryComment(CATEGORY_ROAD_BLOCKS, "MOVEMENT_SPEED Attribute is used for more Info about Modifier Amounts and Operations:\nhttps://minecraft.gamepedia.com/Attribute");
 
+            // add the categories
             for (int q = 1; q <= 5; q++) {
                 cfg.addCustomCategoryComment("RoadBlocks.Block"+q, "Road Block "+q);
             }
 
+            // add the values
             for (int k = 1; k <= 5; k++) {
                 blockIDs.add(k, cfg.getString("Block ID", "RoadBlocks.Block"+k, baseIDs[k-1], "ID of Road Block"));
                 amounts.add(k, (double)cfg.getFloat("Modifier Amount","RoadBlocks.Block"+k, (float) baseAmounts[k-1],-1000.0f,1000.0f,"Amound of Speed Modification"));
@@ -106,6 +111,7 @@ public class Config {
 
     }
 
+    // these methods give read access to the private arrays
     public static String getBlockID(int number) {
         if (number < blockIDs.size()) {
             return blockIDs.get(number);
