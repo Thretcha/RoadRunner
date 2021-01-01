@@ -1,3 +1,12 @@
+#################################################
+         ForgeGradle 2.3-SNAPSHOT-3996470        
+  https://github.com/MinecraftForge/ForgeGradle  
+#################################################
+                 Powered by MCP                  
+             http://modcoderpack.com             
+     by: Searge, ProfMobius, R4wk, ZeuX          
+     Fesh0r, IngisKahn, bspkrs, LexManos         
+#################################################
 :deobfCompileDummyTask
 :deobfProvidedDummyTask
 :sourceApiJava UP-TO-DATE
@@ -5,10 +14,10 @@
 :processApiResources UP-TO-DATE
 :apiClasses UP-TO-DATE
 :sourceMainJava
-:compileJavaNote: D:\Projects\IntelliJ\mc-mods\RoadRunner\build\sources\main\java\thretcha\roadrunner\RoadHandler.java uses unchecked or unsafe operations.
+:compileJavaNote: C:\Users\Benjamin\Documents\modding\RoadRunner\build\sources\main\java\thretcha\roadrunner\RoadHandler.java uses unchecked or unsafe operations.
 Note: Recompile with -Xlint:unchecked for details.
 
-:processResources
+:processResources UP-TO-DATE
 :classes
 :jar
 :sourceTestJava UP-TO-DATE
@@ -22,8 +31,9 @@ Note: Recompile with -Xlint:unchecked for details.
 :extractUserdev UP-TO-DATE
 :genSrgs SKIPPED
 :reobfJar
+:extractAnnotationsJar
 :extractRangemapReplacedMain
-D:\Projects\IntelliJ\mc-mods\RoadRunner\build\sources\main\java
+C:\Users\Benjamin\Documents\modding\RoadRunner\build\sources\main\java
 :retromapReplacedMain
 remapping source...
 :sourceJar
@@ -33,4 +43,4 @@ remapping source...
 
 BUILD SUCCESSFUL
 
-Total time: 7.737 secs
+Total time: 15.705 secs

@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -14,53 +15,33 @@ public class RoadHandler {
     //Road Block modifier uuids
     public static List<UUID> ROAD_MODIFIER_UUID_LIST = new ArrayList<>();
     //list of all the defined Road Block modifiers from the config
-    public static List<AttributeModifier> ROAD_MODIFIER_LIST = new ArrayList<>();
+    private static List<AttributeModifier> ROAD_MODIFIER_LIST = new ArrayList<>();
     //all the Road Block read by the config
-    public static Map<String,UUID> ROAD_BLOCKS = new HashMap<>();
+    private static Map<String,UUID> ROAD_BLOCKS = new HashMap<>();
     //stores the Road Blocks in the correct order so their modifier uuids are easier to get
-    public static String []ROAD_BLOCK_IDS={"","","","",""};
+    //public static String []ROAD_BLOCK_IDS={"","","","",""};
+    private static List<String> ROAD_BLOCK_IDS = new ArrayList<>();
 
     public static void initRoadModifierUUIDList(){
-        ROAD_MODIFIER_UUID_LIST.add(UUID.fromString("8753f773-a718-4ea8-98db-4318be0159fe"));
-        ROAD_MODIFIER_UUID_LIST.add(UUID.fromString("b8b8b5b0-a92a-4721-a9ec-5b83b1950331"));
-        ROAD_MODIFIER_UUID_LIST.add(UUID.fromString("8d560517-f314-47e5-8420-1b13b4740034"));
-        ROAD_MODIFIER_UUID_LIST.add(UUID.fromString("6de83cb8-883b-4d6b-915c-b90e2fdfe154"));
-        ROAD_MODIFIER_UUID_LIST.add(UUID.fromString("48cf6bac-5b95-44b7-b8b0-8f3e491b2c2f"));
+        return;
     }
 
     public static void initRoadModifierList(){
-        ROAD_MODIFIER_LIST.add(new AttributeModifier(ROAD_MODIFIER_UUID_LIST.get(0), "Road 1 Speed Modifier", Config.BLOCK_AMOUNT_1, Config.BLOCK_OPERATION_1));
-        ROAD_MODIFIER_LIST.add(new AttributeModifier(ROAD_MODIFIER_UUID_LIST.get(1), "Road 2 Speed Modifier", Config.BLOCK_AMOUNT_2, Config.BLOCK_OPERATION_2));
-        ROAD_MODIFIER_LIST.add(new AttributeModifier(ROAD_MODIFIER_UUID_LIST.get(2), "Road 3 Speed Modifier", Config.BLOCK_AMOUNT_3, Config.BLOCK_OPERATION_3));
-        ROAD_MODIFIER_LIST.add(new AttributeModifier(ROAD_MODIFIER_UUID_LIST.get(3), "Road 4 Speed Modifier", Config.BLOCK_AMOUNT_4, Config.BLOCK_OPERATION_4));
-        ROAD_MODIFIER_LIST.add(new AttributeModifier(ROAD_MODIFIER_UUID_LIST.get(4), "Road 5 Speed Modifier", Config.BLOCK_AMOUNT_5, Config.BLOCK_OPERATION_5));
-    }
-    private boolean hasRoadModifier(EntityLivingBase entity){
-
-        Set<AttributeModifier> modifierSet = Sets.<AttributeModifier>newHashSet();
-        modifierSet= (Set)entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getModifiers();
-        Boolean ret = false;
-        for (AttributeModifier modifier : modifierSet) {
-            if(ROAD_MODIFIER_LIST.contains(modifier)) {
-                ret = true;
-                break;
-            }
+        int size = Config.getUUIDSize();
+        for (int i = 1; i<size; i++) {
+            ROAD_MODIFIER_LIST.add(new AttributeModifier(Config.getUUID(i), "Road "+i+" Speed Modifier", Config.getAmount(i), Config.getOperation(i)));
         }
-        return ret;
     }
+
     //returns null when the entity doesn't contain a road modifier
     private AttributeModifier getRoadModifier(EntityLivingBase entity){
-        entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getModifiers();
-        Set<AttributeModifier> modifierSet = Sets.<AttributeModifier>newHashSet();
-        modifierSet= (Set)entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getModifiers();
-        AttributeModifier ret = null;
-        for (AttributeModifier modifier : modifierSet) {
-            if(ROAD_MODIFIER_LIST.contains(modifier)) {
-                ret=modifier;
-                break;
+        IAttributeInstance attributeInstance = entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
+        for (AttributeModifier modifier : ROAD_MODIFIER_LIST) {
+            if (attributeInstance.hasModifier(modifier)) {
+                return modifier;
             }
         }
-        return ret;
+        return null;
     }
 
     @SubscribeEvent
@@ -72,34 +53,40 @@ public class RoadHandler {
         {
             BlockPos position = ((EntityLivingBase) event.getEntity()).getPosition().down();
             String BlockUnderEntity = entity.getEntityWorld().getBlockState(position).getBlock().toString();
+            AttributeModifier modifier = getRoadModifier(entity);
+            boolean hasModifier = (modifier != null);
 
 
             //entity walked from non Road Block to a Road Block !livingEntitiesOnRoad.containsKey(entity)
-            if(ROAD_BLOCKS.containsKey(BlockUnderEntity)&&!hasRoadModifier(entity))
+            if(ROAD_BLOCKS.containsKey(BlockUnderEntity) &&
+                    !hasModifier)
             {
                 //add new Road Block modifier
                 addCorrectRoadModifier(entity, BlockUnderEntity);
             }
             //if the entity walked from a Road Block to a Road Block of the same Type
             //do nothing
-           else if(ROAD_BLOCKS.containsKey(BlockUnderEntity)&&getRoadModifier(entity).getID().equals(ROAD_BLOCKS.get(BlockUnderEntity)))
+           else if(ROAD_BLOCKS.containsKey(BlockUnderEntity) &&
+                    modifier.getID().equals(ROAD_BLOCKS.get(BlockUnderEntity)))
             {
 
             }
             //entity walked from a Road Block to a non Road Block
-            else if(!ROAD_BLOCKS.containsKey(BlockUnderEntity)&&hasRoadModifier(entity))
+            else if(!ROAD_BLOCKS.containsKey(BlockUnderEntity) &&
+                    hasModifier)
             {
                 //remove Road Block modifier
-                entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).removeModifier(getRoadModifier(entity).getID());
+                entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).removeModifier(modifier.getID());
             }
 
             //entity walked from a Road Block to a different type of Road Block
-            else if(ROAD_BLOCKS.containsKey(BlockUnderEntity)&&ROAD_BLOCKS.get(BlockUnderEntity).equals(getRoadModifier(entity).getID())) {
+            else if(ROAD_BLOCKS.containsKey(BlockUnderEntity) &&
+                    ROAD_BLOCKS.get(BlockUnderEntity).equals(modifier.getID())) {
 
                 //remove old Road Block modifier
-                entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).removeModifier(getRoadModifier(entity).getID());
+                entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).removeModifier(modifier.getID());
                 //add new Road Block modifier
-                addCorrectRoadModifier(entity,BlockUnderEntity);
+                addCorrectRoadModifier(entity, BlockUnderEntity);
             }
 
 
@@ -107,48 +94,19 @@ public class RoadHandler {
     }
     //To do find a better way to do this that isn't soo painful to look at.
     private void addCorrectRoadModifier(EntityLivingBase entity,String BlockUnderEntity){
-        if(BlockUnderEntity.equals(ROAD_BLOCK_IDS[0]))
-        {
-            entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).applyModifier(ROAD_MODIFIER_LIST.get(0));
-        }
-        if(BlockUnderEntity.equals(ROAD_BLOCK_IDS[1]))
-        {
-            entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).applyModifier(ROAD_MODIFIER_LIST.get(1));
-        }
-        if(BlockUnderEntity.equals(ROAD_BLOCK_IDS[2]))
-        {
-            entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).applyModifier(ROAD_MODIFIER_LIST.get(2));
-        }
-        if(BlockUnderEntity.equals(ROAD_BLOCK_IDS[3]))
-        {
-            entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).applyModifier(ROAD_MODIFIER_LIST.get(3));
-        }
-        if(BlockUnderEntity.equals(ROAD_BLOCK_IDS[4]))
-        {
-            entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).applyModifier(ROAD_MODIFIER_LIST.get(4));
+        int size = ROAD_BLOCK_IDS.size();
+        for(int i = 0; i<size; i++) {
+            if(BlockUnderEntity.equals(ROAD_BLOCK_IDS.get(i))) {
+                entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).applyModifier(ROAD_MODIFIER_LIST.get(i));
+                break;
+            }
         }
     }
     //To do figure out how to add roadblocks in the config in a non hard coded way
     public static void addRoadBlocksFromConfig(){
-        if(Config.BLOCK_ID_1!="") {
-            ROAD_BLOCKS.put("Block{" + Config.BLOCK_ID_1 + "}", ROAD_MODIFIER_LIST.get(0).getID());
-            ROAD_BLOCK_IDS[0]="Block{" + Config.BLOCK_ID_1 + "}";
-        }
-        if(Config.BLOCK_ID_2!="") {
-            ROAD_BLOCKS.put("Block{" + Config.BLOCK_ID_2 + "}", ROAD_MODIFIER_LIST.get(1).getID());
-            ROAD_BLOCK_IDS[1]="Block{" + Config.BLOCK_ID_2 + "}";
-        }
-        if(Config.BLOCK_ID_3!="") {
-            ROAD_BLOCKS.put("Block{" + Config.BLOCK_ID_3 + "}", ROAD_MODIFIER_LIST.get(2).getID());
-            ROAD_BLOCK_IDS[2]="Block{" + Config.BLOCK_ID_3 + "}";
-        }
-        if(Config.BLOCK_ID_4!="") {
-            ROAD_BLOCKS.put("Block{" + Config.BLOCK_ID_4 + "}", ROAD_MODIFIER_LIST.get(3).getID());
-            ROAD_BLOCK_IDS[3]="Block{" + Config.BLOCK_ID_4 + "}";
-        }
-        if(Config.BLOCK_ID_5!="") {
-            ROAD_BLOCKS.put("Block{" + Config.BLOCK_ID_5 + "}", ROAD_MODIFIER_LIST.get(4).getID());
-            ROAD_BLOCK_IDS[4]="Block{" + Config.BLOCK_ID_5 + "}";
+        for (int i = 1; i < Config.getBlockIDSize(); i++) {
+            ROAD_BLOCKS.put("Block{" + Config.getBlockID(i) + "}", ROAD_MODIFIER_LIST.get(i-1).getID());
+            ROAD_BLOCK_IDS.add(i-1, "Block{" + Config.getBlockID(i) + "}");
         }
     }
 }
